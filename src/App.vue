@@ -18,7 +18,9 @@
 			<b-list-group-item v-for="(usuario,id) in usuarios" :key="id">
        <strong>Nome: {{usuario.nome}}</strong><br>
        <strong>E-mail: {{usuario.email}}</strong><br>
-       <strong>ID: {{usuario.id}}</strong><br>
+       <strong>ID: {{id}}</strong><br>
+			 <b-button @click="carregar(id)" variant="warning" size="lg">Carregar</b-button>
+			 <b-button @click="excluir(id)" size="lg" variant="danger" class="ml-2">Excluir</b-button>
 			</b-list-group-item>
 		</b-list-group>
 	</div>
@@ -29,6 +31,7 @@ export default {
 	data(){
 		return{
 			usuarios:[],//salvar os dados da requisição get
+			id:null,//recebe o ID do usuario
 			usuario:{//salva os valores que vem do form e que serão enviados para o firebase com axios
 			nome:'',
 			email:'',
@@ -36,15 +39,39 @@ export default {
 		}
 	},
 	methods:{
+		//metodo para limpar dados
+		limpar(){
+			this.usuario.nome = ''
+			this.usuario.email = ''
+			this.id = null
+		},
+		//metodo para carregar usuairo
+		carregar(id){
+			this.id = id
+			this.usuario = {...this.usuarios[id]}
+		},
+		//metodo para excluir usuario
+		excluir(id){
+			alert("Usuario apagado com sucesso.. "+id)
+			this.$http.delete(`/usuarios/${id}.json`)
+			.then( resp => this.limpar())
+		},
 		//Metodo responsavel por salvar o usuario e que será chamado apos o click
 		salvar(){
 			//fazemos uma requisição post ao fite base usando como parametro os dados recebidos do form(this.usuario)
-			this.$http.post('usuarios.json',this.usuario)
+			//this.$http.post('usuarios.json',this.usuario)
 			//caso a requisição ocorra bem
-			.then(resp => {
-				this.usuario.nome = '',
-				this.usuario.email = ''
-			})
+			//.then(resp => this.limpar())
+
+			//vereficamos se o usuario esta slistado para um update ou é a criaçãode um novo usuario
+			alert(this.id)
+			const metodo = this.id ? 'patch' : 'post'
+			alert(metodo)
+			const finalUrl = this.id ? `/${this.id}.json` : '.json'
+			this.$http[metodo](`/usuarios${finalUrl}`, this.usuario)
+			.then(() => this.limpar())
+						alert(finalUrl)
+
 		},
     //metodo que ira fazer uma requisição get para listar os usuarios já cadastrados e será chamado aparti de um botão
 		obterUsuarios(){
