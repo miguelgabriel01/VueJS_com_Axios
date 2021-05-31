@@ -11,7 +11,16 @@
 		</b-form-group>
 		<hr>
 		<b-button @click="salvar()" size="lg" variant="primary">Salvar</b-button>
+		<b-button @click="obterUsuarios" size="lg" variant="success" class="ml-2">Listar Usuarios</b-button>
 		</b-card>
+		<hr>
+		<b-list-group>
+			<b-list-group-item v-for="(usuario,id) in usuarios" :key="id">
+       <strong>Nome: {{usuario.nome}}</strong><br>
+       <strong>E-mail: {{usuario.email}}</strong><br>
+       <strong>ID: {{id}}</strong><br>
+			</b-list-group-item>
+		</b-list-group>
 	</div>
 </template>
 
@@ -19,7 +28,8 @@
 export default {
 	data(){
 		return{
-			usuario:{
+			usuarios:[],//salvar os dados da requisição get
+			usuario:{//salva os valores que vem do form e que serão enviados para o firebase com axios
 			nome:'',
 			email:'',
 			}
@@ -35,6 +45,15 @@ export default {
 				this.usuario.nome = '',
 				this.usuario.email = ''
 			})
+		},
+    //metodo que ira fazer uma requisição get para listar os usuarios já cadastrados e será chamado aparti de um botão
+		obterUsuarios(){
+		 this.$http.get('usuarios.json')
+		 //caso a requisição ocorra com sucesso
+		 .then(res=> {
+			 this.usuarios = res.data
+			 console.log(res.data)
+		 })
 		}
 	}
  //metodo do ciclo de vida que é criado assim que a aplicação é iniciada
