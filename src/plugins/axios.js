@@ -7,7 +7,14 @@ axios.defaults.baseURL = 'https://curso-vue-66946-default-rtdb.firebaseio.com/'/
 Vue.use({
   install(Vue){
     Vue.prototype.$http = axios//trecho do codigo que permite que o axios possa ser executado em qualquer parte da aplicação
-  }
+  
+    Vue.prototype.$http.interceptors.request.use(config=>{
+      console.log(config.method)//imprime qual metodo foi ultilizado
+      return config
+    }) 
+
+  },
+
 })
 
 //feito essa configuração, devemos importar para o arquivo main.js
