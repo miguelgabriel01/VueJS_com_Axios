@@ -18,7 +18,7 @@
 			<b-list-group-item v-for="(usuario,id) in usuarios" :key="id">
        <strong>Nome: {{usuario.nome}}</strong><br>
        <strong>E-mail: {{usuario.email}}</strong><br>
-       <strong>ID: {{id}}</strong><br>
+       <strong>ID: {{usuario.id}}</strong><br>
 			</b-list-group-item>
 		</b-list-group>
 	</div>
