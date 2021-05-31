@@ -28,7 +28,13 @@ export default {
 	methods:{
 		//Metodo responsavel por salvar o usuario e que será chamado apos o click
 		salvar(){
-			console.log(this.usuario)
+			//fazemos uma requisição post ao fite base usando como parametro os dados recebidos do form(this.usuario)
+			this.$http.post('usuarios.json',this.usuario)
+			//caso a requisição ocorra bem
+			.then(resp => {
+				this.usuario.nome = '',
+				this.usuario.email = ''
+			})
 		}
 	}
  //metodo do ciclo de vida que é criado assim que a aplicação é iniciada
