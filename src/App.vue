@@ -1,6 +1,9 @@
 <template>
 	<div id="app" class="container">
 		<h1>HTTP com Axios</h1>
+		<b-alert show dismissible v-for="mensagem in mensagens" :key="mensagem.texto" :variant="mensagem.tipo">
+			{{mensagem.texto}}
+		</b-alert>
 		<b-card>
 			<b-form-group label="Nome">
          <b-form-input type="text" size="lg" v-model="usuario.nome" placeholder="Informe seu Nome"></b-form-input>
@@ -32,6 +35,7 @@ export default {
 		return{
 			usuarios:[],//salvar os dados da requisição get
 			id:null,//recebe o ID do usuario
+			mensagens:[],//armazenas as mensagens de erro e sucesso
 			usuario:{//salva os valores que vem do form e que serão enviados para o firebase com axios
 			nome:'',
 			email:'',
@@ -44,6 +48,7 @@ export default {
 			this.usuario.nome = ''
 			this.usuario.email = ''
 			this.id = null
+			this.mensagens = []
 		},
 		//metodo para carregar usuairo
 		carregar(id){
@@ -52,9 +57,14 @@ export default {
 		},
 		//metodo para excluir usuario
 		excluir(id){
-			alert("Usuario apagado com sucesso.. "+id)
 			this.$http.delete(`/usuarios/${id}.json`)
 			.then( resp => this.limpar())
+			.catch(err => {
+				this.mensagens.push({
+					texto:'Problemas para excluir Usuario',
+					tipo:'danger'
+				})
+			})
 		},
 		//Metodo responsavel por salvar o usuario e que será chamado apos o click
 		salvar(){
@@ -64,13 +74,16 @@ export default {
 			//.then(resp => this.limpar())
 
 			//vereficamos se o usuario esta slistado para um update ou é a criaçãode um novo usuario
-			alert(this.id)
 			const metodo = this.id ? 'patch' : 'post'
-			alert(metodo)
 			const finalUrl = this.id ? `/${this.id}.json` : '.json'
 			this.$http[metodo](`/usuarios${finalUrl}`, this.usuario)
-			.then(() => this.limpar())
-						alert(finalUrl)
+			.then(() => {
+				this.limpar()
+				this.mensagens.push({
+					texto:'Operação realizada com sucesso!',
+					tipo:'success'
+				})
+			})
 
 		},
     //metodo que ira fazer uma requisição get para listar os usuarios já cadastrados e será chamado aparti de um botão
